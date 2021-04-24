@@ -6,10 +6,12 @@ from tensorflow.keras.utils import to_categorical
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 from firedetectnet import FireDetectNet
+from lrfinder import LearningRateFinder
 import config
 from imutils import paths
 import matplotlib.pyplot as plt
 import numpy as np
+import argparse
 import cv2
 import sys
 
@@ -22,6 +24,10 @@ def load_dataset(dataset_path):
 		image = cv2.resize(image, (128, 128))
 		data.append(image)
 	return np.array(data, dtype="float32")
+
+ap = argparse.ArgumentParser()
+ap.add_argument("-f", "--lrfind", type=int, default=0,	help="whether or not to find optimal learning rate")
+args = vars(ap.parse_args())
 
 print("[INFO] loading data...")
 fireData = load_dataset(config.Fire_path)
@@ -46,6 +52,15 @@ print("[INFO] compiling model...")
 opt = SGD(lr=config.Init_lr, momentum=0.9,decay=config.Init_lr / config.Epochs)
 model = FireDetectNet.build(width=128, height=128, depth=3, classes=2)
 model.compile(loss="binary_crossentropy", optimizer=opt, metrics=["accuracy"])
+
+if args["lr_find"] > 0:
+	print("[INFO] finding learning rate...")
+	lrf = LearningRateFinder(model)
+	lrf.find(aug.flow(trainX, trainY, batch_size=config.Batch_size), 1e-10, 1e+1, stepsPerEpoch=np.ceil((trainX.shape[0] / float(config.Batch_size))), epochs=20, batchSize=config.Batch_size, classWeight=classWeight)
+	lrf.plot_loss()
+	plt.savefig(config.Lr_find_plot_path)
+	print("[INFO] learning rate finder complete")
+	print("[INFO] examine plot and adjust learning rates before training")
 
 print("[INFO] training network...")
 H = model.fit_generator(aug.flow(trainX, trainY, batch_size=config.Batch_size),	validation_data=(testX, testY),	steps_per_epoch=trainX.shape[0] // config.Batch_size, epochs=config.Epochs, class_weight=classWeight, verbose=1)

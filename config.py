@@ -1,7 +1,7 @@
 import os
 
-Fire_path = ""
-Non_fire_path = ""
+Fire_path = "dataset/fire"
+Non_fire_path = "dataset/non_fire"
 
 Classes = ["Non-Fire", "Fire"]
 
