@@ -16,40 +16,40 @@ class FireDetectNet:
 
         # CONV => RELU => POOL
         model.add(SeparableConv2D(16, (7, 7), padding="same", input_shape=inputShape))
-		model.add(Activation("relu"))
-		model.add(BatchNormalization(axis=chanDim))
-		model.add(MaxPooling2D(pool_size=(2, 2)))
+        model.add(Activation("relu"))
+        model.add(BatchNormalization(axis=chanDim))
+        model.add(MaxPooling2D(pool_size=(2, 2)))
 
         # CONV => RELU => POOL
-		model.add(SeparableConv2D(32, (3, 3), padding="same"))
-		model.add(Activation("relu"))
-		model.add(BatchNormalization(axis=chanDim))
-		model.add(MaxPooling2D(pool_size=(2, 2)))
+        model.add(SeparableConv2D(32, (3, 3), padding="same"))
+        model.add(Activation("relu"))
+        model.add(BatchNormalization(axis=chanDim))
+        model.add(MaxPooling2D(pool_size=(2, 2)))
 
-		# (CONV => RELU) * 2 => POOL
-		model.add(SeparableConv2D(64, (3, 3), padding="same"))
-		model.add(Activation("relu"))
-		model.add(BatchNormalization(axis=chanDim))
-		model.add(SeparableConv2D(64, (3, 3), padding="same"))
-		model.add(Activation("relu"))
-		model.add(BatchNormalization(axis=chanDim))
-		model.add(MaxPooling2D(pool_size=(2, 2)))
+        # (CONV => RELU) * 2 => POOL
+        model.add(SeparableConv2D(64, (3, 3), padding="same"))
+        model.add(Activation("relu"))
+        model.add(BatchNormalization(axis=chanDim))
+        model.add(SeparableConv2D(64, (3, 3), padding="same"))
+        model.add(Activation("relu"))
+        model.add(BatchNormalization(axis=chanDim))
+        model.add(MaxPooling2D(pool_size=(2, 2)))
 
         # first set of FC => RELU layers
-		model.add(Flatten())
-		model.add(Dense(128))
-		model.add(Activation("relu"))
-		model.add(BatchNormalization())
-		model.add(Dropout(0.5))
+        model.add(Flatten())
+        model.add(Dense(128))
+        model.add(Activation("relu"))
+        model.add(BatchNormalization())
+        model.add(Dropout(0.5))
 
-		# second set of FC => RELU layers
-		model.add(Dense(128))
-		model.add(Activation("relu"))
-		model.add(BatchNormalization())
-		model.add(Dropout(0.5))
+        # second set of FC => RELU layers
+        model.add(Dense(128))
+        model.add(Activation("relu"))
+        model.add(BatchNormalization())
+        model.add(Dropout(0.5))
 
-		# softmax classifier
-		model.add(Dense(classes))
-		model.add(Activation("softmax"))
+        # softmax classifier
+        model.add(Dense(classes))
+        model.add(Activation("softmax"))
 
-		return model
+        return model
